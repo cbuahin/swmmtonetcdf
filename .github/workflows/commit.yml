@@ -1,4 +1,4 @@
-name: Normal CI tests
+name: Build and Test
 
 on:
   push

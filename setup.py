@@ -37,7 +37,13 @@ def get_version(module='swmmtonetcdf'):
 
 
 def get_description():
-    """Get long description."""
+    """
+
+    Get long description for package
+
+    Returns:
+        A description of the package.
+    """
     with open(os.path.join(HERE, 'README.rst'), 'r') as f:
         data = f.read()
     return data
@@ -59,8 +65,9 @@ setup(
     version=get_version(),
     description='A tool to write SWMM output to netcdf',
     long_description=get_description(),
+    long_description_content_type='text/markdown',
     url='https://github.com/cbuahin/swmmtonetcdf',
-    author='Caleb A. Buahin',
+    author='Caleb Buahin',
     author_email='caleb.buahin@gmail.com',
     install_requires=REQUIREMENTS,
     packages=find_packages(exclude=['contrib', 'docs']),
