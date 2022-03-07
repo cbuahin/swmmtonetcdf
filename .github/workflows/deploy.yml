@@ -38,11 +38,14 @@ jobs:
         cd ..
 
     # Upload to PyPI
-    - name: Build and Upload to TestPyPI
-      if: startsWith(github.ref, 'refs/tags')
+    - name: Build
       run: |
         python3 setup.py sdist bdist_wheel
-        python3 -m twine upload dist/*
-      env:
+
+    # Upload to PyPI
+    - name: Upload to PyPI
+      if: startsWith(github.ref, 'refs/tags')
+      uses: pypa/gh-action-pypi-publish@v1.4.1
+      with:
         TWINE_USERNAME: __token__
         TWINE_PASSWORD: ${{ secrets.TWINE_TOKEN }}
