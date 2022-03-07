@@ -6,6 +6,7 @@ from typing import Any
 #
 from swmmtonetcdf import create_netcdf_from_swmm
 
+
 def valid_file(parser: ArgumentParser, arg: Any):
     """
     Parses filepath to ensure that file is valid and exists.

@@ -19,7 +19,12 @@ HERE = os.path.abspath(os.path.dirname(__file__))
 
 
 def get_version(module='swmmtonetcdf'):
-    """Get version."""
+    """
+    Get current version of package
+    Args:
+        module:
+    Returns:
+    """
     with open(os.path.join(HERE, module, '__init__.py'), 'r') as f:
         data = f.read()
     lines = data.split('\n')
@@ -41,7 +46,7 @@ def get_description():
 REQUIREMENTS = [
     'six~=1.16.0',
     'h5py~=3.1.0',
-    'netCDF4~=1.5.6',
+    'netCDF4~=1.5.8',
     'cftime~=1.4.1',
     'julian~=0.14',
     'swmm-toolkit~=0.8.2',

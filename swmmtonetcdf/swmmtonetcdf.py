@@ -135,9 +135,23 @@ def create_netcdf_from_swmm(swmm_output_file: str, netcdf_output_file: str):
     )
 
     # Element names
+    pollutants_names = get_swmm_output_element_names(file_handle=file_handle,
+                                                     element_type=shared_enum.ElementType.POLLUT)
+
     links = get_swmm_output_element_names(file_handle=file_handle, element_type=shared_enum.ElementType.LINK)
     nodes = get_swmm_output_element_names(file_handle=file_handle, element_type=shared_enum.ElementType.NODE)
     catchments = get_swmm_output_element_names(file_handle=file_handle, element_type=shared_enum.ElementType.SUBCATCH)
+
+    node_attributes = [r.name for r in shared_enum.NodeAttribute if 'POLLUT_CONC_' not in r.name]
+    node_attributes.extend(list(pollutants_names.keys()))
+
+    link_attributes = [r.name for r in shared_enum.LinkAttribute if 'POLLUT_CONC_' not in r.name]
+    link_attributes.extend(list(pollutants_names.keys()))
+
+    catchment_attributes = [r.name for r in shared_enum.SubcatchAttribute if 'POLLUT_CONC_' not in r.name]
+    catchment_attributes.extend(list(pollutants_names.keys()))
+
+    system_attributes = [r.name for r in shared_enum.SystemAttribute]
 
     nc_node_element_names_dimension = netcdf_output.createDimension(dimname='nodes', size=len(nodes))
     nc_link_element_names_dimension = netcdf_output.createDimension(dimname='links', size=len(links))
@@ -148,42 +162,75 @@ def create_netcdf_from_swmm(swmm_output_file: str, netcdf_output_file: str):
         datatype=str,
         dimensions=('nodes',)
     )
-    nc_node_element_names_variable[:] = np.array(list(nodes.keys()), dtype=object)
 
     nc_link_element_names_variable = netcdf_output.createVariable(
         varname='links',
         datatype=str,
         dimensions=('links',)
     )
-    nc_link_element_names_variable[:] = np.array(list(links.keys()), dtype=object)
 
     nc_catchment_element_names_variable = netcdf_output.createVariable(
         varname='catchments',
         datatype=str,
         dimensions=('catchments',)
     )
-    nc_catchment_element_names_variable[:] = np.array(list(catchments.keys()), dtype=object)
 
-    pollutants_names = get_swmm_output_element_names(file_handle=file_handle,
-                                                     element_type=shared_enum.ElementType.POLLUT)
-    # node attributes
-    node_attributes = [r.name for r in shared_enum.NodeAttribute if 'POLLUT_CONC_' not in r.name]
-    node_attributes.extend(pollutants_names.keys())
+    netcdf_output.createDimension(dimname='node_attributes', size=len(node_attributes))
+    netcdf_output.createDimension(dimname='link_attributes', size=len(link_attributes))
+    netcdf_output.createDimension(dimname='catchment_attributes', size=len(catchment_attributes))
+    netcdf_output.createDimension(dimname='system_attributes', size=len(system_attributes))
 
-    nc_node_attributes_dimension = netcdf_output.createDimension(dimname='node_attributes', size=len(node_attributes))
     nc_node_attributes_names_variable = netcdf_output.createVariable(
         varname='node_attribute_names',
         datatype=str,
-        dimensions=('node_attributes',)
+        dimensions=('node_attributes',),
+
     )
-    nc_node_attributes_names_variable[:] = np.array(node_attributes, dtype=object)
+
+    nc_link_attributes_names_variable = netcdf_output.createVariable(
+        varname='link_attribute_names',
+        datatype=str,
+        dimensions=('link_attributes',)
+    )
+
+    nc_catchment_attributes_names_variable = netcdf_output.createVariable(
+        varname='catchment_attribute_names',
+        datatype=str,
+        dimensions=('catchment_attributes',)
+    )
+
+    nc_system_attributes_names_variable = netcdf_output.createVariable(
+        varname='system_attribute_names',
+        datatype=str,
+        dimensions=('system_attributes',)
+    )
 
     nc_node_timeseries = netcdf_output.createVariable(
         varname='node_timeseries',
-        datatype='f8',
-        dimensions=('nodes', 'node_attributes', 'time')
+        datatype='f4',
+        dimensions=('nodes', 'node_attributes', 'time',)
     )
 
+    nc_link_timeseries = netcdf_output.createVariable(
+        varname='link_timeseries',
+        datatype='f4',
+        dimensions=('links', 'link_attributes', 'time',)
+    )
+
+    nc_catchment_timeseries = netcdf_output.createVariable(
+        varname='catchment_timeseries',
+        datatype='f4',
+        dimensions=('catchments', 'catchment_attributes', 'time',)
+    )
+
+    nc_system_timeseries = netcdf_output.createVariable(
+        varname='system_timeseries',
+        datatype='f4',
+        dimensions=('system_attributes', 'time',)
+    )
+    # node attributes
+    nc_node_element_names_variable[:] = np.array(list(nodes.keys()), dtype=object)
+    nc_node_attributes_names_variable[:] = np.array(node_attributes, dtype=object)
     for i in range(len(node_attributes)):
         node_attribute = node_attributes[i]
         node_attribute_enum = shared_enum.NodeAttribute[node_attribute]
@@ -198,32 +245,17 @@ def create_netcdf_from_swmm(swmm_output_file: str, netcdf_output_file: str):
                 endPeriod=num_steps
             )
 
-            nc_node_timeseries[j, i, :] = np.squeeze(np.array(node_series))
+            nc_node_timeseries[j, i, :] = np.squeeze(np.array(node_series, dtype=np.float32))
             netcdf_output.sync()
             j += 1
 
     # link attributes
-    link_attributes = [r.name for r in shared_enum.LinkAttribute if 'POLLUT_CONC_' not in r.name]
-    link_attributes.extend(pollutants_names)
-
-    nc_link_attributes_dimension = netcdf_output.createDimension(dimname='link_attributes',
-                                                                 size=len(link_attributes))
-    nc_link_attributes_names_variable = netcdf_output.createVariable(
-        varname='link_attribute_names',
-        datatype=str,
-        dimensions=('link_attributes',)
-    )
+    nc_link_element_names_variable[:] = np.array(list(links.keys()), dtype=object)
     nc_link_attributes_names_variable[:] = np.array(link_attributes, dtype=object)
-
-    nc_link_timeseries = netcdf_output.createVariable(
-        varname='link_timeseries',
-        datatype='f8',
-        dimensions=('links', 'link_attributes', 'time')
-    )
 
     for i in range(len(link_attributes)):
         link_attribute = link_attributes[i]
-        link_attribute_enum = shared_enum.NodeAttribute[link_attribute]
+        link_attribute_enum = shared_enum.LinkAttribute[link_attribute]
 
         j: int = 0
         for link_id, link_index in links.items():
@@ -235,31 +267,16 @@ def create_netcdf_from_swmm(swmm_output_file: str, netcdf_output_file: str):
                 endPeriod=num_steps
             )
 
-            nc_link_timeseries[j, i, :] = np.squeeze(np.array(link_series))
+            nc_link_timeseries[j, i, :] = np.squeeze(np.array(link_series, dtype=np.float32))
             netcdf_output.sync()
 
     # catchment attributes
-    catchment_attributes = [r.name for r in shared_enum.SubcatchAttribute if 'POLLUT_CONC_' not in r.name]
-    catchment_attributes.extend(pollutants_names)
-
-    nc_catchment_attributes_dimension = netcdf_output.createDimension(dimname='catchment_attributes',
-                                                                      size=len(catchment_attributes))
-    nc_catchment_attributes_names_variable = netcdf_output.createVariable(
-        varname='catchment_attribute_names',
-        datatype=str,
-        dimensions=('catchment_attributes',)
-    )
+    nc_catchment_element_names_variable[:] = np.array(list(catchments.keys()), dtype=object)
     nc_catchment_attributes_names_variable[:] = np.array(catchment_attributes, dtype=object)
-
-    nc_catchment_timeseries = netcdf_output.createVariable(
-        varname='catchment_timeseries',
-        datatype='f8',
-        dimensions=('catchments', 'catchment_attributes', 'time')
-    )
 
     for i in range(len(catchment_attributes)):
         catchment_attribute = catchment_attributes[i]
-        catchment_attribute_enum = shared_enum.NodeAttribute[catchment_attribute]
+        catchment_attribute_enum = shared_enum.SubcatchAttribute[catchment_attribute]
 
         j: int = 0
         for catchment_id, catchment_index in catchments.items():
@@ -271,27 +288,11 @@ def create_netcdf_from_swmm(swmm_output_file: str, netcdf_output_file: str):
                 endPeriod=num_steps
             )
 
-            nc_catchment_timeseries[j, i, :] = np.squeeze(np.array(catchment_series))
+            nc_catchment_timeseries[j, i, :] = np.squeeze(np.array(catchment_series, dtype=np.float32))
             netcdf_output.sync()
 
     # system attributes
-    system_attributes = [r.name for r in shared_enum.SystemAttribute if 'POLLUT_CONC_' not in r.name]
-
-    nc_system_attributes_dimension = netcdf_output.createDimension(dimname='system_attributes',
-                                                                   size=len(system_attributes))
-
-    nc_system_attributes_names_variable = netcdf_output.createVariable(
-        varname='system_attribute_names',
-        datatype=str,
-        dimensions=('system_attributes',)
-    )
     nc_system_attributes_names_variable[:] = np.array(system_attributes, dtype=object)
-
-    nc_system_timeseries = netcdf_output.createVariable(
-        varname='system_timeseries',
-        datatype='f8',
-        dimensions=('system_attributes', 'time')
-    )
 
     for i in range(len(system_attributes)):
         system_attribute = system_attributes[i]
@@ -304,7 +305,7 @@ def create_netcdf_from_swmm(swmm_output_file: str, netcdf_output_file: str):
             endPeriod=num_steps
         )
 
-        nc_system_timeseries[i, :] = np.squeeze(np.array(system_series))
+        nc_system_timeseries[i, :] = np.squeeze(np.array(system_series, np.float32))
         netcdf_output.sync()
 
     netcdf_output.close()
