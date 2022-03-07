@@ -2,7 +2,11 @@
 
 A python package for converting swmm output to netcdf.
 
-![example workflow](https://github.com/cbuahin/swmmtonetcdf/actions/workflows/deploy.yml/badge.svg)
+## Project Information
+
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+
+![Build Test and Deploy](https://github.com/cbuahin/swmmtonetcdf/actions/workflows/deploy.yml/badge.svg)
 
 ## PyPi Deployment Instructions
 
