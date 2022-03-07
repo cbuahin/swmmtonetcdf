@@ -61,6 +61,7 @@ def main():
     convert_command = subparsers.add_parser(name="convert", help="Converts SWMM output file to netcdf")
     convert_command.add_argument("--out", help='Path to base SWMM output file', type=lambda x: valid_file(parser, x))
     convert_command.add_argument("--nc", help='Path to NetCDF file', type=lambda x: valid_path(parser, x))
+    convert_command.add_argument("--inp", help='Input file to extract geometry from', action='store_true')
     convert_command.add_argument("--geom", help='Save geometry', action='store_true')
     convert_command.add_argument("--no-geom", help='Save geometry', action='store_false')
     convert_command.set_defaults(geom=True)

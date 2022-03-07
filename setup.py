@@ -44,7 +44,8 @@ REQUIREMENTS = [
     'netCDF4~=1.5.6',
     'cftime~=1.4.1',
     'julian~=0.14',
-    'swmm-toolkit~=0.8.2'
+    'swmm-toolkit~=0.8.2',
+    'numpy'
 ]
 
 
