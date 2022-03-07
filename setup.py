@@ -39,13 +39,13 @@ def get_description():
 
 
 REQUIREMENTS = [
-    'six',
+    'six~=1.16.0',
     'h5py~=3.1.0',
     'netCDF4~=1.5.6',
     'cftime~=1.4.1',
     'julian~=0.14',
     'swmm-toolkit~=0.8.2',
-    'numpy'
+    'numpy~=1.19.4'
 ]
 
 
@@ -70,15 +70,18 @@ setup(
     include_package_data=True,
     license="GNU GPLv3",
     keywords="swmm5, swmm, hydraulics, hydrology, modeling, collection system",
+    python_requires=">=3.6",
     classifiers=[
         "Topic :: Scientific/Engineering",
-        "Topic :: Documentation :: Sphinx",
         "Operating System :: Microsoft :: Windows",
         "Operating System :: Unix",
         "Operating System :: MacOS",
         "License :: OSI Approved :: BSD License",
+        "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
-        "Programming Language :: C",
+        "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9",
+        "Programming Language :: Python :: 3.10",
         "Development Status :: 4 - Beta",
     ])
