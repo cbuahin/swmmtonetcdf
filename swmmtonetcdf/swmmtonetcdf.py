@@ -11,7 +11,6 @@ import cftime
 
 
 # local imports
-
 def get_swmm_output_dates(file_handle):
     """
     Get timestamps for output file
@@ -169,7 +168,7 @@ def create_netcdf_from_swmm(swmm_output_file: str, netcdf_output_file: str):
                                                      element_type=shared_enum.ElementType.POLLUT)
     # node attributes
     node_attributes = [r.name for r in shared_enum.NodeAttribute if 'POLLUT_CONC_' not in r.name]
-    node_attributes.extend(pollutants_names)
+    node_attributes.extend(pollutants_names.keys())
 
     nc_node_attributes_dimension = netcdf_output.createDimension(dimname='node_attributes', size=len(node_attributes))
     nc_node_attributes_names_variable = netcdf_output.createVariable(

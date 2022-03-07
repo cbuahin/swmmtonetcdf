@@ -18,7 +18,7 @@ from setuptools import find_packages, setup
 HERE = os.path.abspath(os.path.dirname(__file__))
 
 
-def get_version(module='pyswmm'):
+def get_version(module='swmmtonetcdf'):
     """Get version."""
     with open(os.path.join(HERE, module, '__init__.py'), 'r') as f:
         data = f.read()

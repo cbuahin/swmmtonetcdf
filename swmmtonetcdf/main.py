@@ -3,6 +3,8 @@ import os
 from argparse import ArgumentParser, ArgumentError
 from typing import Any
 
+#
+from swmmtonetcdf import create_netcdf_from_swmm
 
 def valid_file(parser: ArgumentParser, arg: Any):
     """
@@ -67,8 +69,10 @@ def main():
     convert_command.set_defaults(geom=True)
     convert_command.add_argument("--prj", help='WKT projection to use for geometry', default='EPSG:4326')
 
-    if parser.sub_parser_name.lower() == 'convert':
-        pass
+    args = parser.parse_args()
+
+    if args.sub_parser_name.lower() == 'convert':
+        create_netcdf_from_swmm(swmm_output_file=args.out, netcdf_output_file=args.nc)
 
 
 if __name__ == '__main__':
