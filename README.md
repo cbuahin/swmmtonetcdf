@@ -1,5 +1,8 @@
 # swmmtonetcdf
-A python package for converting swmm output to netcdf
+
+A python package for converting swmm output to netcdf.
+
+![example workflow](https://github.com/cbuahin/swmmtonetcdf/actions/workflows/deploy.yml/badge.svg)
 
 ## PyPi Deployment Instructions
 
