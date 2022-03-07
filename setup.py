@@ -54,7 +54,7 @@ setup(
     description='A tool to write SWMM output to netcdf',
     long_description=get_description(),
     url='https://github.com/cbuahin/swmmtonetcdf',
-    author='Caleb E. Buahin',
+    author='Caleb A. Buahin',
     author_email='caleb.buahin@gmail.com',
     install_requires=REQUIREMENTS,
     packages=find_packages(exclude=['contrib', 'docs']),
