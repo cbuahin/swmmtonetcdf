@@ -1,12 +1,11 @@
-name: Publish Python distributions to PyPI
+name: Normal CI tests
 
 on:
-  release:
-      types:
-          - "published"
+  push
+
 jobs:
   build-n-publish:
-    name: Build and publish Python 🐍 distributions 📦 to PyPI
+    name: Continuous Integration Checks
     runs-on: ubuntu-18.04
     steps:
     - uses: actions/checkout@v2
@@ -35,15 +34,3 @@ jobs:
         cd tests
         python3 -m unittest discover
         cd ..
-
-    # Upload to PyPI
-    - name: Build
-      run: |
-        python3 setup.py sdist bdist_wheel
-
-    # Upload to PyPI
-    - name: Upload to PyPI
-      uses: pypa/gh-action-pypi-publish@v1.4.1
-      with:
-        TWINE_USERNAME: __token__
-        TWINE_PASSWORD: ${{ secrets.TWINE_TOKEN }}
