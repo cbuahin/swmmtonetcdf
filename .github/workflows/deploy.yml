@@ -1,10 +1,9 @@
 name: Publish Python distributions to PyPI
 
 on:
-  # Triggers the deploy workflow only for the main branch
-  push:
-    branches: [ main ]
-
+  release:
+      types:
+          - "published"
 jobs:
   build-n-publish:
     name: Build and publish Python 🐍 distributions 📦 to PyPI and TestPyPI
@@ -44,7 +43,6 @@ jobs:
 
     # Upload to PyPI
     - name: Upload to PyPI
-      if: github.event_name != 'create' || github.ref_type == 'tag'
       uses: pypa/gh-action-pypi-publish@v1.4.1
       with:
         TWINE_USERNAME: __token__
