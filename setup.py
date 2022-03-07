@@ -44,7 +44,7 @@ def get_description():
     Returns:
         A description of the package.
     """
-    with open(os.path.join(HERE, 'README.rst'), 'r') as f:
+    with open(os.path.join(HERE, 'README.md'), 'r') as f:
         data = f.read()
     return data
 
