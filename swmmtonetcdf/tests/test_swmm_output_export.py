@@ -1,3 +1,4 @@
+import gc
 import unittest
 from swmmtonetcdf.tests.data import TRIVIAL_OUTPUT
 from swmmtonetcdf import create_netcdf_from_swmm
@@ -40,6 +41,7 @@ class TestSWMMtoNetCDF(unittest.TestCase):
                             :]
 
             np.testing.assert_almost_equal(swmm_values, netcdf_values.data)
+            gc.collect()
 
     def test_read_node_outputs(self):
         num_elements = TestSWMMtoNetCDF.project_size[shared_enum.ElementType.NODE.value]
@@ -62,6 +64,7 @@ class TestSWMMtoNetCDF(unittest.TestCase):
                                     :]
 
                     np.testing.assert_almost_equal(swmm_values, netcdf_values.data)
+                    gc.collect()
 
     def test_read_link_outputs(self):
         num_elements = TestSWMMtoNetCDF.project_size[shared_enum.ElementType.LINK.value]
@@ -84,6 +87,7 @@ class TestSWMMtoNetCDF(unittest.TestCase):
                                     :]
 
                     np.testing.assert_almost_equal(swmm_values, netcdf_values.data)
+                    gc.collect()
 
     def test_read_catchment_outputs(self):
         num_elements = TestSWMMtoNetCDF.project_size[shared_enum.ElementType.SUBCATCH.value]
@@ -106,6 +110,7 @@ class TestSWMMtoNetCDF(unittest.TestCase):
                                     :]
 
                     np.testing.assert_almost_equal(swmm_values, netcdf_values.data)
+                    gc.collect()
 
     @classmethod
     def tearDownClass(cls) -> None:
