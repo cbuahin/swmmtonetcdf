@@ -105,7 +105,6 @@ def create_netcdf_from_swmm(swmm_output_file: str, netcdf_output_file: str):
     Returns:
 
     """
-
     file_handle = output.init()
     output.open(p_handle=file_handle, path=swmm_output_file)
     output_metadata.OutputMetadata(file_handle)
@@ -153,9 +152,9 @@ def create_netcdf_from_swmm(swmm_output_file: str, netcdf_output_file: str):
 
     system_attributes = [r.name for r in shared_enum.SystemAttribute]
 
-    nc_node_element_names_dimension = netcdf_output.createDimension(dimname='nodes', size=len(nodes))
-    nc_link_element_names_dimension = netcdf_output.createDimension(dimname='links', size=len(links))
-    nc_catchments_element_names_dimension = netcdf_output.createDimension(dimname='catchments', size=len(catchments))
+    netcdf_output.createDimension(dimname='nodes', size=len(nodes))
+    netcdf_output.createDimension(dimname='links', size=len(links))
+    netcdf_output.createDimension(dimname='catchments', size=len(catchments))
 
     nc_node_element_names_variable = netcdf_output.createVariable(
         varname='nodes',
@@ -271,6 +270,7 @@ def create_netcdf_from_swmm(swmm_output_file: str, netcdf_output_file: str):
             netcdf_output.sync()
 
     # catchment attributes
+
     nc_catchment_element_names_variable[:] = np.array(list(catchments.keys()), dtype=object)
     nc_catchment_attributes_names_variable[:] = np.array(catchment_attributes, dtype=object)
 
