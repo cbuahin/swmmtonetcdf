@@ -76,7 +76,7 @@ setup(
     },
     entry_points={
         'console_scripts': [
-            'swmmtonetcdf=swmmtonetcdf.__main__:main'
+            'swmmtonetcdf=swmmtonetcdf:main',
         ]
     },
     include_package_data=True,

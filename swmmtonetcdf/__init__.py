@@ -1,5 +1,5 @@
 from swmmtonetcdf.swmmtonetcdf import *
-from swmmtonetcdf.__main__ import *
+from swmmtonetcdf.__main__ import main
 
 VERSION_INFO = (0, 0, 0)
 
