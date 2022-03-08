@@ -39,70 +39,73 @@ class TestSWMMtoNetCDF(unittest.TestCase):
                             enum_value.value,
                             :]
 
-            np.testing.assert_almost_equal(swmm_values, netcdf_values)
+            np.testing.assert_almost_equal(swmm_values, netcdf_values.data)
 
     def test_read_node_outputs(self):
         num_elements = TestSWMMtoNetCDF.project_size[shared_enum.ElementType.NODE.value]
         for i in range(num_elements):
             for enum_value in shared_enum.NodeAttribute:
-                swmm_values = output.get_node_series(
-                    p_handle=TestSWMMtoNetCDF.swmm_output_handle,
-                    nodeIndex=i,
-                    attr=enum_value,
-                    startPeriod=0,
-                    endPeriod=TestSWMMtoNetCDF.num_steps
-                )
+                if 'POLLUT_CONC' not in enum_value.name:
+                    swmm_values = output.get_node_series(
+                        p_handle=TestSWMMtoNetCDF.swmm_output_handle,
+                        nodeIndex=i,
+                        attr=enum_value,
+                        startPeriod=0,
+                        endPeriod=TestSWMMtoNetCDF.num_steps
+                    )
 
-                swmm_values = np.array(swmm_values)
+                    swmm_values = np.array(swmm_values)
 
-                netcdf_values = TestSWMMtoNetCDF.netcdf_output.variables['node_timeseries'][
-                                i,
-                                enum_value.value,
-                                :]
+                    netcdf_values = TestSWMMtoNetCDF.netcdf_output.variables['node_timeseries'][
+                                    i,
+                                    enum_value.value,
+                                    :]
 
-                np.testing.assert_almost_equal(swmm_values, netcdf_values)
+                    np.testing.assert_almost_equal(swmm_values, netcdf_values.data)
 
     def test_read_link_outputs(self):
         num_elements = TestSWMMtoNetCDF.project_size[shared_enum.ElementType.LINK.value]
         for i in range(num_elements):
             for enum_value in shared_enum.LinkAttribute:
-                swmm_values = output.get_link_series(
-                    p_handle=TestSWMMtoNetCDF.swmm_output_handle,
-                    linkIndex=i,
-                    attr=enum_value,
-                    startPeriod=0,
-                    endPeriod=TestSWMMtoNetCDF.num_steps
-                )
+                if 'POLLUT_CONC' not in enum_value.name:
+                    swmm_values = output.get_link_series(
+                        p_handle=TestSWMMtoNetCDF.swmm_output_handle,
+                        linkIndex=i,
+                        attr=enum_value,
+                        startPeriod=0,
+                        endPeriod=TestSWMMtoNetCDF.num_steps
+                    )
 
-                swmm_values = np.array(swmm_values)
+                    swmm_values = np.array(swmm_values)
 
-                netcdf_values = TestSWMMtoNetCDF.netcdf_output.variables['link_timeseries'][
-                                i,
-                                enum_value.value,
-                                :]
+                    netcdf_values = TestSWMMtoNetCDF.netcdf_output.variables['link_timeseries'][
+                                    i,
+                                    enum_value.value,
+                                    :]
 
-                np.testing.assert_almost_equal(swmm_values, netcdf_values)
+                    np.testing.assert_almost_equal(swmm_values, netcdf_values.data)
 
     def test_read_catchment_outputs(self):
         num_elements = TestSWMMtoNetCDF.project_size[shared_enum.ElementType.SUBCATCH.value]
         for i in range(num_elements):
             for enum_value in shared_enum.SubcatchAttribute:
-                swmm_values = output.get_subcatch_series(
-                    p_handle=TestSWMMtoNetCDF.swmm_output_handle,
-                    subcatchIndex=i,
-                    attr=enum_value,
-                    startPeriod=0,
-                    endPeriod=TestSWMMtoNetCDF.num_steps
-                )
+                if 'POLLUT_CONC' not in enum_value.name:
+                    swmm_values = output.get_subcatch_series(
+                        p_handle=TestSWMMtoNetCDF.swmm_output_handle,
+                        subcatchIndex=i,
+                        attr=enum_value,
+                        startPeriod=0,
+                        endPeriod=TestSWMMtoNetCDF.num_steps
+                    )
 
-                swmm_values = np.array(swmm_values)
+                    swmm_values = np.array(swmm_values)
 
-                netcdf_values = TestSWMMtoNetCDF.netcdf_output.variables['catchment_timeseries'][
-                                i,
-                                enum_value.value,
-                                :]
+                    netcdf_values = TestSWMMtoNetCDF.netcdf_output.variables['catchment_timeseries'][
+                                    i,
+                                    enum_value.value,
+                                    :]
 
-                np.testing.assert_almost_equal(swmm_values, netcdf_values)
+                    np.testing.assert_almost_equal(swmm_values, netcdf_values.data)
 
     @classmethod
     def tearDownClass(cls) -> None:

@@ -8,6 +8,7 @@ import numpy as np
 from swmm.toolkit import output, shared_enum, output_metadata
 import netCDF4 as nc
 import cftime
+from collections import OrderedDict
 
 
 # local imports
@@ -46,7 +47,7 @@ def get_swmm_output_element_names(file_handle, element_type: shared_enum.Element
     Returns:
 
     """
-    names = {}
+    names = OrderedDict()
     project_size = output.get_proj_size(file_handle)
 
     count = project_size[element_type.value]
@@ -122,7 +123,8 @@ def create_netcdf_from_swmm(swmm_output_file: str, netcdf_output_file: str):
     nc_time_variable = netcdf_output.createVariable(
         varname="time",
         datatype='f8',
-        dimensions=("time",)
+        dimensions=("time",),
+
     )
     nc_time_variable.units = "hours since 0001-01-01 00:00:00.0"
     nc_time_variable.calendar = "gregorian"
@@ -206,25 +208,25 @@ def create_netcdf_from_swmm(swmm_output_file: str, netcdf_output_file: str):
 
     nc_node_timeseries = netcdf_output.createVariable(
         varname='node_timeseries',
-        datatype='f4',
+        datatype=np.float,
         dimensions=('nodes', 'node_attributes', 'time',)
     )
 
     nc_link_timeseries = netcdf_output.createVariable(
         varname='link_timeseries',
-        datatype='f4',
+        datatype=np.float,
         dimensions=('links', 'link_attributes', 'time',)
     )
 
     nc_catchment_timeseries = netcdf_output.createVariable(
         varname='catchment_timeseries',
-        datatype='f4',
+        datatype=np.float,
         dimensions=('catchments', 'catchment_attributes', 'time',)
     )
 
     nc_system_timeseries = netcdf_output.createVariable(
         varname='system_timeseries',
-        datatype='f4',
+        datatype=np.float,
         dimensions=('system_attributes', 'time',)
     )
     # node attributes
@@ -244,7 +246,7 @@ def create_netcdf_from_swmm(swmm_output_file: str, netcdf_output_file: str):
                 endPeriod=num_steps
             )
 
-            nc_node_timeseries[j, i, :] = np.squeeze(np.array(node_series, dtype=np.float32))
+            nc_node_timeseries[j, i, :] = np.array(node_series)
             netcdf_output.sync()
             j += 1
 
@@ -266,11 +268,11 @@ def create_netcdf_from_swmm(swmm_output_file: str, netcdf_output_file: str):
                 endPeriod=num_steps
             )
 
-            nc_link_timeseries[j, i, :] = np.squeeze(np.array(link_series, dtype=np.float32))
+            nc_link_timeseries[j, i, :] = np.array(link_series)
             netcdf_output.sync()
+            j += 1
 
     # catchment attributes
-
     nc_catchment_element_names_variable[:] = np.array(list(catchments.keys()), dtype=object)
     nc_catchment_attributes_names_variable[:] = np.array(catchment_attributes, dtype=object)
 
@@ -288,8 +290,9 @@ def create_netcdf_from_swmm(swmm_output_file: str, netcdf_output_file: str):
                 endPeriod=num_steps
             )
 
-            nc_catchment_timeseries[j, i, :] = np.squeeze(np.array(catchment_series, dtype=np.float32))
+            nc_catchment_timeseries[j, i, :] = np.array(catchment_series, dtype=np.float)
             netcdf_output.sync()
+            j += 1
 
     # system attributes
     nc_system_attributes_names_variable[:] = np.array(system_attributes, dtype=object)
@@ -305,7 +308,7 @@ def create_netcdf_from_swmm(swmm_output_file: str, netcdf_output_file: str):
             endPeriod=num_steps
         )
 
-        nc_system_timeseries[i, :] = np.squeeze(np.array(system_series, np.float32))
+        nc_system_timeseries[i, :] = np.array(system_series)
         netcdf_output.sync()
 
     netcdf_output.close()
