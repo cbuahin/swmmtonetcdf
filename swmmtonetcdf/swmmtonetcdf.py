@@ -274,5 +274,7 @@ def create_netcdf_from_swmm(swmm_output_file: str, netcdf_output_file: str):
         if t % 5000 == 0:
             netcdf_output.sync()
 
+        progress = int(t * 100 / num_steps)
+        print(rf'Progress: {progress}%/{100}', end='\r')
     netcdf_output.close()
     output.close(file_handle)
