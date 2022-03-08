@@ -1,5 +1,5 @@
 import unittest
-from tests.data import TRIVIAL_OUTPUT
+from swmmtonetcdf.tests.data import TRIVIAL_OUTPUT
 from swmmtonetcdf import create_netcdf_from_swmm
 import numpy as np
 from swmm.toolkit import output, shared_enum

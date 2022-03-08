@@ -32,7 +32,7 @@ jobs:
     # Tests with unittest
     - name: Test with unittest
       run: |
-        cd tests
+        cd swmmtonetcdf/tests
         python3 -m unittest discover
         cd ..
 
