@@ -67,7 +67,7 @@ setup(
     long_description=get_description(),
     long_description_content_type='text/markdown',
     url='https://github.com/cbuahin/swmmtonetcdf',
-    author='Caleb Buahin',
+    author='Caleb Buahin, Jennifer Wu',
     author_email='caleb.buahin@gmail.com',
     install_requires=REQUIREMENTS,
     packages=find_packages(exclude=['contrib', 'docs']),
@@ -76,7 +76,7 @@ setup(
     },
     entry_points={
         'console_scripts': [
-            'swmmtonetcdf = swmmtonetcdf.main:main'
+            'swmmtonetcdf=swmmtonetcdf.__main__:main'
         ]
     },
     include_package_data=True,

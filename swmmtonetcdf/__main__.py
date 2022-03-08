@@ -1,11 +1,10 @@
 # Python imports
 import os
+import sys
 from argparse import ArgumentParser, ArgumentError
 from typing import Any
 
-#
 from swmmtonetcdf import create_netcdf_from_swmm
-
 
 def valid_file(parser: ArgumentParser, arg: Any):
     """
@@ -77,4 +76,4 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    sys.exit(main())
