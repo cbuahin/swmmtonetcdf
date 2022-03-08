@@ -116,3 +116,8 @@ class TestSWMMtoNetCDF(unittest.TestCase):
     def tearDownClass(cls) -> None:
         cls.netcdf_output.close()
         output.close(cls.swmm_output_handle)
+
+
+def test_large_file_modified():
+    create_netcdf_from_swmm(r"C:\Projects\GLWAModeling\_worktree\dwsd_merge\Calibration\VALIDATION_BASE.out",
+                            r"C:\Projects\GLWAModeling\_worktree\dwsd_merge\Calibration\VALIDATION_BASE.nc")

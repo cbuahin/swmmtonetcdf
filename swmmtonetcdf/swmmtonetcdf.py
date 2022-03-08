@@ -114,12 +114,14 @@ def create_netcdf_from_swmm(swmm_output_file: str, netcdf_output_file: str):
 
     # output size
     project_size = output.get_proj_size(file_handle)
+    num_catchments = project_size[shared_enum.ElementType.SUBCATCH.value]
+    num_nodes = project_size[shared_enum.ElementType.NODE.value]
+    num_links = project_size[shared_enum.ElementType.LINK.value]
     num_steps = output.get_times(file_handle, shared_enum.Time.NUM_PERIODS)
-    num_pollutants = project_size[4]
     swmm_output_timestamps = get_swmm_output_dates(file_handle=file_handle)
 
     # Timestamps
-    nc_time_dimension = netcdf_output.createDimension(dimname='time', size=None)
+    netcdf_output.createDimension(dimname='time', size=None)
     nc_time_variable = netcdf_output.createVariable(
         varname="time",
         datatype='f8',
@@ -145,14 +147,18 @@ def create_netcdf_from_swmm(swmm_output_file: str, netcdf_output_file: str):
 
     node_attributes = [r.name for r in shared_enum.NodeAttribute if 'POLLUT_CONC_' not in r.name]
     node_attributes.extend(list(pollutants_names.keys()))
+    num_node_attributes = len(node_attributes)
 
     link_attributes = [r.name for r in shared_enum.LinkAttribute if 'POLLUT_CONC_' not in r.name]
     link_attributes.extend(list(pollutants_names.keys()))
+    num_link_attributes = len(link_attributes)
 
     catchment_attributes = [r.name for r in shared_enum.SubcatchAttribute if 'POLLUT_CONC_' not in r.name]
     catchment_attributes.extend(list(pollutants_names.keys()))
+    num_catchment_attributes = len(catchment_attributes)
 
     system_attributes = [r.name for r in shared_enum.SystemAttribute]
+    num_system_attributes = len(system_attributes)
 
     netcdf_output.createDimension(dimname='nodes', size=len(nodes))
     netcdf_output.createDimension(dimname='links', size=len(links))
@@ -229,87 +235,44 @@ def create_netcdf_from_swmm(swmm_output_file: str, netcdf_output_file: str):
         datatype=np.float,
         dimensions=('system_attributes', 'time',)
     )
+
     # node attributes
     nc_node_element_names_variable[:] = np.array(list(nodes.keys()), dtype=object)
     nc_node_attributes_names_variable[:] = np.array(node_attributes, dtype=object)
-    for i in range(len(node_attributes)):
-        node_attribute = node_attributes[i]
-        node_attribute_enum = shared_enum.NodeAttribute[node_attribute]
-
-        j: int = 0
-        for node_id, node_index in nodes.items():
-            node_series = output.get_node_series(
-                p_handle=file_handle,
-                nodeIndex=node_index,
-                attr=node_attribute_enum,
-                startPeriod=0,
-                endPeriod=num_steps
-            )
-
-            nc_node_timeseries[j, i, :] = np.array(node_series)
-            netcdf_output.sync()
-            j += 1
 
     # link attributes
     nc_link_element_names_variable[:] = np.array(list(links.keys()), dtype=object)
     nc_link_attributes_names_variable[:] = np.array(link_attributes, dtype=object)
 
-    for i in range(len(link_attributes)):
-        link_attribute = link_attributes[i]
-        link_attribute_enum = shared_enum.LinkAttribute[link_attribute]
-
-        j: int = 0
-        for link_id, link_index in links.items():
-            link_series = output.get_link_series(
-                p_handle=file_handle,
-                linkIndex=link_index,
-                attr=link_attribute_enum,
-                startPeriod=0,
-                endPeriod=num_steps
-            )
-
-            nc_link_timeseries[j, i, :] = np.array(link_series)
-            netcdf_output.sync()
-            j += 1
-
     # catchment attributes
     nc_catchment_element_names_variable[:] = np.array(list(catchments.keys()), dtype=object)
     nc_catchment_attributes_names_variable[:] = np.array(catchment_attributes, dtype=object)
 
-    for i in range(len(catchment_attributes)):
-        catchment_attribute = catchment_attributes[i]
-        catchment_attribute_enum = shared_enum.SubcatchAttribute[catchment_attribute]
-
-        j: int = 0
-        for catchment_id, catchment_index in catchments.items():
-            catchment_series = output.get_subcatch_series(
-                p_handle=file_handle,
-                subcatchIndex=catchment_index,
-                attr=catchment_attribute_enum,
-                startPeriod=0,
-                endPeriod=num_steps
-            )
-
-            nc_catchment_timeseries[j, i, :] = np.array(catchment_series, dtype=np.float)
-            netcdf_output.sync()
-            j += 1
-
     # system attributes
     nc_system_attributes_names_variable[:] = np.array(system_attributes, dtype=object)
 
-    for i in range(len(system_attributes)):
-        system_attribute = system_attributes[i]
-        system_attribute_enum = shared_enum.SystemAttribute[system_attribute]
+    for t in range(num_steps):
+        # catchment attributes
+        for j in range(num_catchments):
+            catchment_results = output.get_subcatch_result(p_handle=file_handle, timeIndex=t, subcatchIndex=j)
+            nc_catchment_timeseries[j, :, t] = np.array(catchment_results[0:num_catchment_attributes])
 
-        system_series = output.get_system_series(
-            p_handle=file_handle,
-            attr=system_attribute_enum,
-            startPeriod=0,
-            endPeriod=num_steps
-        )
+        # node attributes
+        for j in range(num_nodes):
+            node_results = output.get_node_result(p_handle=file_handle, timeIndex=t, nodeIndex=j)
+            nc_node_timeseries[j, :, t] = np.array(node_results[0:num_node_attributes])
 
-        nc_system_timeseries[i, :] = np.array(system_series)
-        netcdf_output.sync()
+        # link attributes
+        for j in range(num_links):
+            link_results = output.get_link_result(p_handle=file_handle, timeIndex=t, linkIndex=j)
+            nc_link_timeseries[j, :, t] = np.array(link_results[0:num_link_attributes])
+
+        # system attributes
+        system_results = output.get_system_result(p_handle=file_handle, timeIndex=t, dummyIndex=0)
+        nc_system_timeseries[:, t] = np.array(system_results[0:num_system_attributes])
+
+        if t % 5000 == 0:
+            netcdf_output.sync()
 
     netcdf_output.close()
     output.close(file_handle)
