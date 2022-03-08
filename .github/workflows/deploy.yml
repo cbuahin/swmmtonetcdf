@@ -22,6 +22,8 @@ jobs:
       run: |
         # Upgrade pip
         python3 -m pip install --upgrade pip
+        # Install pytest
+        python3 -m pip install pytest
         # Install build deps
         python3 -m pip install setuptools wheel twine
         # If requirements.txt exists, install from it
