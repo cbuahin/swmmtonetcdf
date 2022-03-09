@@ -196,7 +196,7 @@ class TestSWMMtoNetCDFByNative(unittest.TestCase):
 
                     swmm_values = np.array(swmm_values)
 
-                    netcdf_values = TestSWMMtoNetCDFByNative.netcdf_output_by_series.variables['node_timeseries'][
+                    netcdf_values = TestSWMMtoNetCDFByNative.netcdf_output_by_native.variables['node_timeseries'][
                                     i,
                                     enum_value.value,
                                     :]
@@ -219,7 +219,7 @@ class TestSWMMtoNetCDFByNative(unittest.TestCase):
 
                     swmm_values = np.array(swmm_values)
 
-                    netcdf_values = TestSWMMtoNetCDFByNative.netcdf_output_by_series.variables['link_timeseries'][
+                    netcdf_values = TestSWMMtoNetCDFByNative.netcdf_output_by_native.variables['link_timeseries'][
                                     i,
                                     enum_value.value,
                                     :]
