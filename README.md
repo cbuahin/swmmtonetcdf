@@ -10,15 +10,8 @@ A python package for converting swmm output to netcdf.
 
 [![Build Test and Deploy](https://github.com/cbuahin/swmmtonetcdf/actions/workflows/deploy.yml/badge.svg)](https://github.com/cbuahin/swmmtonetcdf/actions)
 
-## PyPi Deployment Instructions
+[![Downloads](https://pepy.tech/badge/swmmtonetcdf)](https://pepy.tech/project/swmmtonetcdf)
 
-1. Install required packages for deployment to pypi  
-`pip install --upgrade build`  
-`pip install twine`  
+[![Downloads](https://pepy.tech/badge/swmmtonetcdf/month)](https://pepy.tech/project/swmmtonetcdf)
 
-2. Build codebase and upload to pypi  
-`python -m build`  
-`python -m twine upload swmmtonetcdf dist/*`  
-
-## PyPI Deployment via Github Action
-Make a tagged release
+[![Downloads](https://pepy.tech/badge/swmmtonetcdf/week)](https://pepy.tech/project/swmmtonetcdf)
